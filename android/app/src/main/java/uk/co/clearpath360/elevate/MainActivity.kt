@@ -43,11 +43,11 @@ class MainActivity : Activity() {
                 .show()
         }
         try {
-            window.statusBarColor = Color.parseColor("#f5f1ea")
-            window.navigationBarColor = Color.parseColor("#f5f1ea")
+            window.statusBarColor = Color.parseColor("#ffffff")
+            window.navigationBarColor = Color.parseColor("#ffffff")
         } catch (e: Exception) { }
         web = WebView(this)
-        web.setBackgroundColor(Color.parseColor("#f5f1ea"))
+        web.setBackgroundColor(Color.parseColor("#f4f4f4"))
         web.settings.javaScriptEnabled = true
         web.settings.domStorageEnabled = true
         web.addJavascriptInterface(Bridge(), "Native")

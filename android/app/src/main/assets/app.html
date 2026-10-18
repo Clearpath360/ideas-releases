@@ -6,8 +6,8 @@
 <title>Elevate</title>
 <style>
 :root{
-  --bg:#f5f1ea; --card:#fffdf9; --ink:#1c2230; --soft:#5b6272; --line:#e4ddd1;
-  --acc:#1f6f5c; --acc2:#e3f0eb; --hot:#d9583b; --warm:#c98a16; --good:#2a8a4a;
+  --bg:#f4f4f4; --card:#ffffff; --ink:#111111; --soft:#5c5c5c; --line:#e2e2e2;
+  --acc:#ff0000; --acc2:#f1f1f1; --btn:#111111; --hot:#e00000; --warm:#c98a16; --good:#2a8a4a;
   --r:14px;
   font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
@@ -16,29 +16,31 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-size:16px}
 body{padding-bottom:96px}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 input,textarea{font:inherit;color:var(--ink)}
-.serif{font-family:Georgia,"Times New Roman",serif}
-header{position:sticky;top:0;z-index:5;background:var(--bg);padding:14px 16px 8px;border-bottom:1px solid var(--line)}
+.serif{font-family:inherit}
+header{position:sticky;top:0;z-index:5;background:var(--card);padding:14px 16px 10px;border-top:4px solid var(--acc);border-bottom:1px solid var(--line)}
 .top{display:flex;align-items:center;gap:10px}
-.brand{font-family:Georgia,serif;font-size:26px;font-weight:700;letter-spacing:-.5px;flex:1}
+.brand{font-size:26px;font-weight:800;letter-spacing:-.5px;flex:1;color:var(--soft)}
 .brand b{color:var(--acc)}
+.brand small{display:block;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--soft);margin-top:2px}
 .iconbtn{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:20px}
 .iconbtn:active{background:var(--line)}
-.search{width:100%;margin-top:10px;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.search{width:100%;margin-top:10px;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.search:focus,.field:focus,.sheet textarea:focus{outline:2px solid var(--acc);outline-offset:-1px}
 .chips{display:flex;gap:8px;margin-top:10px;overflow-x:auto;scrollbar-width:none}
 .chip{flex:none;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:14px}
-.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.chip.on{background:var(--btn);color:#fff;border-color:var(--btn)}
 main{padding:12px 16px;max-width:760px;margin:0 auto}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:10px}
 .idea{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left}
-.badge{flex:none;width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:18px;color:#fff;background:#b9b2a6}
+.badge{flex:none;width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:18px;color:#fff;background:#c4c4c4}
 .badge.s-low{background:var(--hot)} .badge.s-mid{background:var(--warm)} .badge.s-hi{background:var(--good)}
-.t1{font-family:Georgia,serif;font-size:18px;font-weight:700;line-height:1.25}
+.t1{font-size:18px;font-weight:700;line-height:1.25}
 .t2{color:var(--soft);font-size:14px;margin-top:3px;line-height:1.35}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
-.tag{font-size:12px;padding:3px 8px;border-radius:999px;background:var(--acc2);color:var(--acc)}
+.tag{font-size:12px;padding:3px 8px;border-radius:999px;background:var(--acc2);color:var(--ink)}
 .tag.warn{background:#fbe9e3;color:var(--hot)}
 .empty{text-align:center;color:var(--soft);padding:50px 20px}
-.empty .big{font-family:Georgia,serif;font-size:22px;color:var(--ink);margin-bottom:8px}
+.empty .big{font-size:22px;color:var(--ink);margin-bottom:8px}
 .fabs{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));display:flex;gap:10px;z-index:6}
 .fab{height:58px;border-radius:29px;padding:0 20px;display:flex;align-items:center;gap:8px;font-weight:600;box-shadow:0 6px 18px rgba(28,34,48,.18)}
 .fab.main{background:var(--acc);color:#fff}
@@ -46,18 +48,18 @@ main{padding:12px 16px;max-width:760px;margin:0 auto}
 .tabs{display:flex;gap:4px;margin-top:12px;background:var(--line);padding:4px;border-radius:12px}
 .tab{flex:1;padding:9px 4px;border-radius:9px;font-size:14px;font-weight:600;color:var(--soft)}
 .tab.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
-h2{font-family:Georgia,serif;font-size:22px;margin:4px 0 4px;line-height:1.2}
+h2{font-size:22px;margin:4px 0 4px;line-height:1.2}
 h3{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--soft);margin:18px 0 8px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border-radius:12px;font-weight:600;background:var(--acc);color:#fff;min-height:46px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border-radius:12px;font-weight:600;background:var(--btn);color:#fff;min-height:46px}
 .btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
 .btn.full{width:100%}
 .btn:disabled{opacity:.5}
 .row{display:flex;gap:8px;flex-wrap:wrap}
-.note{border-left:3px solid var(--acc);padding:6px 0 6px 12px;margin:10px 0}
+.note{border-left:3px solid var(--line);padding:6px 0 6px 12px;margin:10px 0}
 .note .when{font-size:12px;color:var(--soft)}
 .note img{max-width:100%;border-radius:10px;margin-top:6px}
 .score-big{display:flex;align-items:center;gap:14px}
-.score-big .n{font-size:52px;font-weight:800;line-height:1;font-family:Georgia,serif}
+.score-big .n{font-size:52px;font-weight:800;line-height:1;}
 .score-big .of{color:var(--soft)}
 .crit{margin:12px 0}
 .crit .hd{display:flex;justify-content:space-between;font-weight:600;font-size:15px}
@@ -67,8 +69,8 @@ h3{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--soft
 ul.plain{padding-left:18px;margin:6px 0} ul.plain li{margin:6px 0;line-height:1.4}
 .rival{border-top:1px solid var(--line);padding:12px 0}
 .rival:first-child{border-top:0}
-.rival a{color:var(--acc);word-break:break-all;font-size:13px}
-.gap{margin-top:6px;font-size:14px;background:#f1f7f4;border-radius:8px;padding:7px 9px}
+.rival a{color:var(--ink);word-break:break-all;font-size:13px}
+.gap{margin-top:6px;font-size:14px;background:var(--acc2);border-radius:8px;padding:7px 9px}
 .feat{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
 .feat:first-child{border-top:0}
 .pill{font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--ink);color:#fff;flex:none;margin-top:2px}
@@ -85,7 +87,7 @@ label.lb{display:block;font-weight:600;margin:14px 0 6px}
 .err{background:#fbe9e3;color:#8a2c17;border-radius:10px;padding:10px 12px;font-size:14px;margin:8px 0}
 .delta{font-size:14px;font-weight:700;margin-left:6px}
 .delta.up{color:var(--good)} .delta.down{color:var(--hot)}
-.back{font-size:15px;color:var(--acc);font-weight:600;padding:6px 0}
+.back{font-size:15px;color:var(--ink);font-weight:600;padding:6px 0}
 .spark{display:block;margin-top:8px}
 </style>
 </head>
@@ -274,7 +276,7 @@ function viewList(){
   else list.sort((a,b) => b.updated - a.updated);
   const chip = (k, l) => `<button class="chip ${S.sort===k?'on':''}" data-sort="${k}">${l}</button>`;
   const total = D.ideas.filter(i => !i.archived).length;
-  return `<header><div class="top"><div class="brand">Elev<b>a</b>te</div>
+  return `<header><div class="top"><div class="brand">Elevate<b>.</b><small>Clearpath360 internal tool</small></div>
     <button class="iconbtn" data-act="settings" aria-label="Settings">⚙︎</button></div>
     <input class="search" id="q" placeholder="Search ${total} idea${total===1?'':'s'}" value="${esc(S.q)}">
     <div class="chips">${chip('new','Latest')}${chip('top','Best scores')}${chip('unrated','Not rated')}${chip('stale','Untouched 30+ days')}${chip('archived','Archived')}</div></header>
@@ -334,7 +336,7 @@ function tabScore(i){
 function spark(v){
   const w = 300, hh = 46, n = v.length, x = k => 6 + k*(w-12)/(n-1), y = s => hh - 6 - (s/10)*(hh-12);
   const pts = v.map((s,k) => x(k)+','+y(s)).join(' ');
-  return `<svg class="spark" viewBox="0 0 ${w} ${hh}" width="100%" height="${hh}" aria-label="Score history"><polyline points="${pts}" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linejoin="round"/>${v.map((s,k) => `<circle cx="${x(k)}" cy="${y(s)}" r="3.5" fill="var(--acc)"/>`).join('')}</svg><div class="small">Score history: ${v.join(' → ')}</div>`;
+  return `<svg class="spark" viewBox="0 0 ${w} ${hh}" width="100%" height="${hh}" aria-label="Score history"><polyline points="${pts}" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round"/>${v.map((s,k) => `<circle cx="${x(k)}" cy="${y(s)}" r="3.5" fill="var(--acc)"/>`).join('')}</svg><div class="small">Score history: ${v.join(' → ')}</div>`;
 }
 function tabRivals(i){
   const R = i.rivals;
@@ -343,7 +345,7 @@ function tabRivals(i){
   h += `<div class="card"><b>${R.crowded ? 'Crowded: ' + R.crowded + '/10' : 'Market check'}</b><p style="margin:6px 0 0">${esc(R.summary)}</p><div class="small" style="margin-top:6px">Checked ${ago(R.t)}. Web results go out of date, so check again before deciding.</div></div>`;
   h += `<div class="card">${R.list.length ? R.list.map(c => `<div class="rival"><div style="display:flex;gap:8px;align-items:center"><b style="flex:1">${esc(c.name)}</b>${c.checked ? '' : '<span class="tag warn" title="Link not in the search results">unverified link</span>'}</div>
     <div class="small">${esc(c.what)}</div><div class="small">Price: ${esc(c.price)}</div>${c.url ? `<a href="#" data-url="${esc(c.url)}">${esc(c.url)}</a>` : ''}${c.gap ? `<div class="gap"><b>Gap:</b> ${esc(c.gap)}</div>` : ''}</div>`).join('') : '<div class="small">No direct competitors found in the search. That can mean an open field, or a market nobody wants.</div>'}</div>`;
-  if (R.sources && R.sources.length) h += `<h3>Sources searched</h3><div class="card small">${R.sources.slice(0,8).map(s => `<div style="margin:4px 0"><a href="#" data-url="${esc(s.url)}" style="color:var(--acc)">${esc(s.title)}</a></div>`).join('')}</div>`;
+  if (R.sources && R.sources.length) h += `<h3>Sources searched</h3><div class="card small">${R.sources.slice(0,8).map(s => `<div style="margin:4px 0"><a href="#" data-url="${esc(s.url)}" style="color:var(--ink)">${esc(s.title)}</a></div>`).join('')}</div>`;
   if (!S.busy['riv'+i.id]) h += `<button class="btn ghost full" data-act="rivals">Check again</button>`;
   return h;
 }
