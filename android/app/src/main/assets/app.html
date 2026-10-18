@@ -155,6 +155,8 @@ async function claude(body){
     if (r.status === 429 || r.status === 529 || r.status === 503) throw new Error('Claude is busy. Try again in a minute.');
     if (!r.status) throw new Error('No connection. Check your internet.');
     let m = ''; try { m = JSON.parse(r.body).error.message; } catch(e){}
+    if (/credit balance/i.test(m)) throw new Error('Your Claude API account has no credit. Add some at platform.claude.com, Billing.');
+    if (r.status === 403) throw new Error('This API key is not allowed to do that. Make a new key and paste it in Settings.');
     throw new Error('Claude error ' + r.status + (m ? ': ' + m : ''));
   }
   return JSON.parse(r.body);
@@ -286,7 +288,8 @@ function cardHtml(i){
     <div class="badge ${scls(r && r.overall)}">${r ? r.overall : '–'}</div>
     <div style="flex:1;min-width:0"><div class="t1">${esc(i.title)}</div>
     <div class="t2">${esc(i.pitch || (i.notes[0] && i.notes[0].text) || '').slice(0,140)}</div>
-    <div class="tags">${i.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}${stale && !i.archived ? '<span class="tag warn">untouched</span>' : ''}<span class="small" style="margin-left:auto">${ago(i.updated)}</span></div></div></button></div>`;
+    <div class="tags">${S.busy['tidy'+i.id] ? '<span class="tag">tidying…</span>' : ''}${i.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}${stale && !i.archived ? '<span class="tag warn">untouched</span>' : ''}<span class="small" style="margin-left:auto">${ago(i.updated)}</span></div>
+    ${S.err['tidy'+i.id] ? `<div class="err" style="margin-bottom:0">${esc(S.err['tidy'+i.id])}</div>` : ''}</div></button></div>`;
 }
 
 function viewIdea(i){
@@ -304,7 +307,7 @@ function errOf(key){ return S.err[key] ? `<div class="err">${esc(S.err[key])}</d
 
 function tabIdea(i){
   const r = lastRating(i);
-  return `${!i.tidied && D.settings.apiKey ? busyOr('tidy'+i.id, 'Tidying your notes…') : ''}${errOf('tidy'+i.id)}
+  return `${!i.tidied && D.settings.apiKey ? busyOr('tidy'+i.id, 'Tidying your notes…') : ''}${errOf('tidy'+i.id)}${S.err['tidy'+i.id] && !S.busy['tidy'+i.id] ? '<button class="btn ghost full" data-act="retidy" style="margin-bottom:10px">Try again</button>' : ''}
   ${r ? `<div class="card" style="display:flex;align-items:center;gap:12px"><div class="badge ${scls(r.overall)}">${r.overall}</div><div><b>${esc(r.verdict)}</b><div class="small">Scored ${ago(r.t)}${i.notes.length > r.notesAt ? ' · new notes since, re-score in Score' : ''}</div></div></div>` : ''}
   <h3>Notes</h3><div class="card">${i.notes.map(n => `<div class="note"><div class="when">${new Date(n.t).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})} · ${n.src}</div>
     ${n.text ? `<div>${esc(n.text)}</div>` : ''}${n.img && N ? `<img src="${N.image(n.img)}" alt="">` : ''}</div>`).join('')}</div>
@@ -361,7 +364,8 @@ function viewSettings(){
   <div class="small" style="margin-top:6px">Stays on this phone. Used for titles, scores, competitor search and develop. Rough cost (estimate): under 1p to tidy, about 2p to score, about 10p for a competitor search.</div>
   <label class="lb" for="me">About you, for the "Fit for you" score</label>
   <textarea class="field" id="me" rows="4" placeholder="e.g. Run a print business and do property marketing for a client. Can build web apps with AI help. Small budget.">${esc(D.settings.aboutMe)}</textarea>
-  <button class="btn full" style="margin-top:12px" data-act="savesettings">Save</button></div>
+  <div class="row" style="margin-top:12px"><button class="btn ghost" style="flex:1" data-act="testkey">Test key</button><button class="btn" style="flex:1" data-act="savesettings">Save</button></div>
+  ${busyOr('testkey','Testing your key…')}${errOf('testkey')}${S.keyOk && !S.err.testkey && !S.busy.testkey ? '<div class="small" style="color:var(--good);margin-top:8px">✓ Key works</div>' : ''}</div>
   <h3>Backup</h3><div class="card"><p class="small" style="margin-top:0">Ideas live only on this phone. Save a backup now and then.</p>
   <div class="row"><button class="btn ghost" style="flex:1" data-act="export">Save backup</button><button class="btn ghost" style="flex:1" data-act="import">Restore backup</button></div></div>
   <h3>Quick capture</h3><div class="card small">Home screen: long-press an empty space, Widgets, Elevate.<br>Quick settings: pull down twice, tap the pencil, drag the Elevate tile up.<br>Share: from any app, Share, then Elevate.</div>
@@ -388,14 +392,14 @@ function openMenu(i){
 async function run(key, fn){
   if (S.busy[key]) return;
   S.busy[key] = true; delete S.err[key]; render();
-  try { await fn(); } catch(e){ S.err[key] = e.message || String(e); }
+  try { await fn(); } catch(e){ S.err[key] = e.message || String(e); toast(S.err[key]); }
   delete S.busy[key]; render();
 }
 async function voiceText(){ if (!N) return null; const t = await call('voice'); return t && t.trim() ? t.trim() : null; }
 function addNote(i, text, src){ i.notes.push({ id:uid(), t:Date.now(), text, src }); i.updated = Date.now(); save(); }
 async function tidyPending(){
   if (!D.settings.apiKey) return;
-  for (const i of D.ideas.filter(x => !x.tidied && !x.archived).slice(0,5)) await run('tidy'+i.id, () => aiTidy(i));
+  for (const i of D.ideas.filter(x => !x.tidied && !x.archived).slice(0,5)) { delete S.err['tidy'+i.id]; await run('tidy'+i.id, () => aiTidy(i)); }
 }
 
 app.addEventListener('input', e => { if (e.target.id === 'q'){ S.q = e.target.value; const pos = e.target.selectionStart; render(); const q = document.getElementById('q'); q.focus(); q.setSelectionRange(pos,pos); } });
@@ -426,6 +430,9 @@ app.addEventListener('click', async e => {
     case 'rename': openTypeSheet('Rename', txt => { i.title = txt.slice(0,60); save(); }, i.title); break;
     case 'archive': i.archived = !i.archived; save(); S.sheet = null; S.view = 'list'; toast(i.archived ? 'Archived' : 'Restored'); render(); break;
     case 'delete': if (confirm('Delete this idea and all its notes for good?')){ D.ideas = D.ideas.filter(x => x !== i); save(); S.sheet = null; S.view = 'list'; render(); } break;
+    case 'retidy': run('tidy'+i.id, () => aiTidy(i)); break;
+    case 'testkey': D.settings.apiKey = document.getElementById('key').value.trim(); save();
+      run('testkey', async () => { await claude({ model:MODEL_FAST, max_tokens:5, messages:[{ role:'user', content:'Say OK' }] }); toast('Key works'); S.keyOk = true; }); break;
     case 'rate': run('rate'+i.id, () => aiRate(i)); break;
     case 'rivals': run('riv'+i.id, () => aiRivals(i)); break;
     case 'develop': run('dev'+i.id, () => aiDevelop(i)); break;
@@ -444,7 +451,7 @@ app.addEventListener('click', async e => {
 });
 
 /* called by Android */
-window.onResumeApp = () => { const n = mergeInbox(); if (n){ if (S.view === 'list') render(); else toast(n + ' new idea' + (n===1?'':'s') + ' captured'); tidyPending(); } };
+window.onResumeApp = () => { const n = mergeInbox(); if (n){ if (S.view === 'list') render(); else toast(n + ' new idea' + (n===1?'':'s') + ' captured'); } tidyPending(); };
 window.onBack = () => { if (S.sheet){ S.sheet = null; render(); return true; } if (S.view !== 'list'){ S.view = 'list'; render(); return true; } return false; };
 
 load(); mergeInbox(); render(); tidyPending();
