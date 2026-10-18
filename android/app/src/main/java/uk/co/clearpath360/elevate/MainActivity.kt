@@ -51,6 +51,7 @@ class MainActivity : Activity() {
         web.settings.javaScriptEnabled = true
         web.settings.domStorageEnabled = true
         web.addJavascriptInterface(Bridge(), "Native")
+        web.webChromeClient = android.webkit.WebChromeClient()
         web.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 loaded = true

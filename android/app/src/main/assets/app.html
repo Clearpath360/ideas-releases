@@ -95,6 +95,8 @@ label.lb{display:block;font-weight:600;margin:14px 0 6px}
 <div id="app"></div>
 <script>
 'use strict';
+window.onerror = (m, src, line) => { try { const el = document.createElement('div'); el.className = 'toast'; el.style.bottom = '160px'; el.textContent = 'App error: ' + m + ' (line ' + line + ')'; document.body.appendChild(el); setTimeout(() => el.remove(), 8000); } catch(e){} };
+window.addEventListener('unhandledrejection', e => window.onerror(String(e.reason && e.reason.message || e.reason), '', 0));
 /* ---------- native bridge ---------- */
 const N = window.Native || null;
 const cbs = {}; let cbn = 0;
@@ -311,10 +313,11 @@ function tabIdea(i){
   const r = lastRating(i);
   return `${!i.tidied && D.settings.apiKey ? busyOr('tidy'+i.id, 'Tidying your notes…') : ''}${errOf('tidy'+i.id)}${S.err['tidy'+i.id] && !S.busy['tidy'+i.id] ? '<button class="btn ghost full" data-act="retidy" style="margin-bottom:10px">Try again</button>' : ''}
   ${r ? `<div class="card" style="display:flex;align-items:center;gap:12px"><div class="badge ${scls(r.overall)}">${r.overall}</div><div><b>${esc(r.verdict)}</b><div class="small">Scored ${ago(r.t)}${i.notes.length > r.notesAt ? ' · new notes since, re-score in Score' : ''}</div></div></div>` : ''}
-  <h3>Notes</h3><div class="card">${i.notes.map(n => `<div class="note"><div class="when">${new Date(n.t).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})} · ${n.src}</div>
+  <h3>Notes <span style="text-transform:none;letter-spacing:0;font-weight:400">· tap a note to edit or delete</span></h3><div class="card">${i.notes.map(n => `<div class="note" data-act="note" data-note="${n.id}" style="cursor:pointer"><div class="when">${new Date(n.t).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})} · ${n.src}</div>
     ${n.text ? `<div>${esc(n.text)}</div>` : ''}${n.img && N ? `<img src="${N.image(n.img)}" alt="">` : ''}</div>`).join('')}</div>
   ${i.tags.length ? `<div class="tags">${i.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>` : ''}
-  <div class="small" style="margin-top:14px">First captured ${ago(i.created)}.</div>`;
+  <div class="small" style="margin-top:14px">First captured ${ago(i.created)}.</div>
+  <button class="btn ghost full" data-act="delete" style="margin-top:14px;color:var(--hot)">Delete idea</button>`;
 }
 function tabScore(i){
   const r = lastRating(i), hist = i.ratings;
@@ -381,6 +384,20 @@ function openTypeSheet(title, onSave, pre){
     <div class="row" style="margin-top:12px"><button class="btn ghost" style="flex:1" data-act="closesheet">Cancel</button><button class="btn" style="flex:1" data-act="sheetsave">Save</button></div></div></div>`;
   S.sheetSave = onSave; render(); setTimeout(() => { const t = document.getElementById('sheettext'); if (t) t.focus(); }, 50);
 }
+function askSheet(title, okLabel, onOk){
+  S.sheet = () => `<div class="sheet-bg" data-act="closesheet"><div class="sheet">
+    <div style="font-weight:700;margin-bottom:14px">${esc(title)}</div>
+    <div class="row"><button class="btn ghost" style="flex:1" data-act="closesheet">Cancel</button><button class="btn" style="flex:1;background:var(--hot)" data-act="askok">${esc(okLabel)}</button></div></div></div>`;
+  S.askOk = onOk; render();
+}
+function noteMenu(i, n){
+  S.sheet = () => `<div class="sheet-bg" data-act="closesheet"><div class="sheet">
+    <div class="small" style="margin-bottom:10px">${esc((n.text||'').slice(0,120))}</div>
+    <button class="btn ghost full" data-act="noteedit">Edit note</button><div style="height:8px"></div>
+    <button class="btn ghost full" data-act="notedel" style="color:var(--hot)">Delete note</button><div style="height:8px"></div>
+    <button class="btn ghost full" data-act="closesheet">Close</button></div></div>`;
+  S.noteId = n.id; render();
+}
 function openMenu(i){
   S.sheet = () => `<div class="sheet-bg" data-act="closesheet"><div class="sheet">
     <button class="btn ghost full" data-act="rename">Rename</button><div style="height:8px"></div>
@@ -422,16 +439,31 @@ app.addEventListener('click', async e => {
   switch (t.dataset.act){
     case 'home': S.view = 'list'; render(); window.scrollTo(0,0); break;
     case 'settings': S.view = 'settings'; render(); break;
-    case 'voice': { const v = await voiceText(); if (v){ const n = newIdea(v,'voice'); toast('Idea saved'); render(); if (D.settings.apiKey) run('tidy'+n.id, () => aiTidy(n)); } break; }
+    case 'voice': { const v = await voiceText();
+      if (v){ const n = newIdea(v,'voice'); toast('Idea saved'); render(); if (D.settings.apiKey) run('tidy'+n.id, () => aiTidy(n)); }
+      else { toast('No speech heard, type it instead'); openTypeSheet('New idea', txt => { const n = newIdea(txt,'typed'); toast('Idea saved'); if (D.settings.apiKey) run('tidy'+n.id, () => aiTidy(n)); }); }
+      break; }
     case 'type': openTypeSheet('New idea', txt => { const n = newIdea(txt,'typed'); toast('Idea saved'); if (D.settings.apiKey) run('tidy'+n.id, () => aiTidy(n)); }); break;
-    case 'addvoice': { const v = await voiceText(); if (v){ addNote(i, v, 'voice'); toast('Added to idea'); S.tab = 'idea'; render(); } break; }
+    case 'addvoice': { const v = await voiceText();
+      if (v){ addNote(i, v, 'voice'); toast('Added to idea'); S.tab = 'idea'; render(); }
+      else { toast('No speech heard, type it instead'); openTypeSheet('Add to this idea', txt => { addNote(i, txt, 'typed'); S.tab = 'idea'; toast('Added to idea'); }); }
+      break; }
     case 'addtype': openTypeSheet('Add to this idea', txt => { addNote(i, txt, 'typed'); S.tab = 'idea'; toast('Added to idea'); }); break;
-    case 'sheetsave': { const v = (document.getElementById('sheettext').value || '').trim(); const f = S.sheetSave; S.sheet = null; if (v && f) f(v); render(); break; }
+    case 'sheetsave': { const v = (document.getElementById('sheettext').value || '').trim(); if (!v){ toast('Type something first'); break; } const f = S.sheetSave; S.sheet = null; if (f) f(v); render(); break; }
     case 'closesheet': if (e.target === t || t.tagName === 'BUTTON'){ S.sheet = null; render(); } break;
     case 'menu': openMenu(i); break;
     case 'rename': openTypeSheet('Rename', txt => { i.title = txt.slice(0,60); save(); }, i.title); break;
     case 'archive': i.archived = !i.archived; save(); S.sheet = null; S.view = 'list'; toast(i.archived ? 'Archived' : 'Restored'); render(); break;
-    case 'delete': if (confirm('Delete this idea and all its notes for good?')){ D.ideas = D.ideas.filter(x => x !== i); save(); S.sheet = null; S.view = 'list'; render(); } break;
+    case 'delete': askSheet('Delete "' + i.title + '" and all its notes for good?', 'Delete', () => { D.ideas = D.ideas.filter(x => x !== i); save(); S.view = 'list'; toast('Idea deleted'); }); break;
+    case 'askok': { const f = S.askOk; S.sheet = null; S.askOk = null; if (f) f(); render(); break; }
+    case 'note': { const n = i.notes.find(x => x.id === t.dataset.note); if (n) noteMenu(i, n); break; }
+    case 'noteedit': { const n = i.notes.find(x => x.id === S.noteId); if (n) openTypeSheet('Edit note', txt => { n.text = txt; i.updated = Date.now(); save(); toast('Note updated'); }, n.text); break; }
+    case 'notedel': { const n = i.notes.find(x => x.id === S.noteId);
+      if (n) askSheet(i.notes.length === 1 ? 'This is the only note. Delete the whole idea?' : 'Delete this note?', 'Delete', () => {
+        if (i.notes.length === 1){ D.ideas = D.ideas.filter(x => x !== i); S.view = 'list'; toast('Idea deleted'); }
+        else { i.notes = i.notes.filter(x => x !== n); i.updated = Date.now(); toast('Note deleted'); }
+        save(); });
+      break; }
     case 'retidy': run('tidy'+i.id, () => aiTidy(i)); break;
     case 'testkey': D.settings.apiKey = document.getElementById('key').value.trim(); save();
       run('testkey', async () => { await claude({ model:MODEL_FAST, max_tokens:5, messages:[{ role:'user', content:'Say OK' }] }); toast('Key works'); S.keyOk = true; }); break;
