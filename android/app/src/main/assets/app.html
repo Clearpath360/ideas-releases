@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Elevate</title>
+<style>
+:root{
+  --bg:#f5f1ea; --card:#fffdf9; --ink:#1c2230; --soft:#5b6272; --line:#e4ddd1;
+  --acc:#1f6f5c; --acc2:#e3f0eb; --hot:#d9583b; --warm:#c98a16; --good:#2a8a4a;
+  --r:14px;
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-size:16px}
+body{padding-bottom:96px}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+input,textarea{font:inherit;color:var(--ink)}
+.serif{font-family:Georgia,"Times New Roman",serif}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:14px 16px 8px;border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:10px}
+.brand{font-family:Georgia,serif;font-size:26px;font-weight:700;letter-spacing:-.5px;flex:1}
+.brand b{color:var(--acc)}
+.iconbtn{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-size:20px}
+.iconbtn:active{background:var(--line)}
+.search{width:100%;margin-top:10px;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.chips{display:flex;gap:8px;margin-top:10px;overflow-x:auto;scrollbar-width:none}
+.chip{flex:none;padding:7px 13px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-size:14px}
+.chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+main{padding:12px 16px;max-width:760px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.idea{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left}
+.badge{flex:none;width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-weight:700;font-size:18px;color:#fff;background:#b9b2a6}
+.badge.s-low{background:var(--hot)} .badge.s-mid{background:var(--warm)} .badge.s-hi{background:var(--good)}
+.t1{font-family:Georgia,serif;font-size:18px;font-weight:700;line-height:1.25}
+.t2{color:var(--soft);font-size:14px;margin-top:3px;line-height:1.35}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
+.tag{font-size:12px;padding:3px 8px;border-radius:999px;background:var(--acc2);color:var(--acc)}
+.tag.warn{background:#fbe9e3;color:var(--hot)}
+.empty{text-align:center;color:var(--soft);padding:50px 20px}
+.empty .big{font-family:Georgia,serif;font-size:22px;color:var(--ink);margin-bottom:8px}
+.fabs{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));display:flex;gap:10px;z-index:6}
+.fab{height:58px;border-radius:29px;padding:0 20px;display:flex;align-items:center;gap:8px;font-weight:600;box-shadow:0 6px 18px rgba(28,34,48,.18)}
+.fab.main{background:var(--acc);color:#fff}
+.fab.alt{background:var(--card);border:1px solid var(--line);width:58px;padding:0;justify-content:center;font-size:20px}
+.tabs{display:flex;gap:4px;margin-top:12px;background:var(--line);padding:4px;border-radius:12px}
+.tab{flex:1;padding:9px 4px;border-radius:9px;font-size:14px;font-weight:600;color:var(--soft)}
+.tab.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+h2{font-family:Georgia,serif;font-size:22px;margin:4px 0 4px;line-height:1.2}
+h3{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--soft);margin:18px 0 8px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border-radius:12px;font-weight:600;background:var(--acc);color:#fff;min-height:46px}
+.btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+.btn.full{width:100%}
+.btn:disabled{opacity:.5}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.note{border-left:3px solid var(--acc);padding:6px 0 6px 12px;margin:10px 0}
+.note .when{font-size:12px;color:var(--soft)}
+.note img{max-width:100%;border-radius:10px;margin-top:6px}
+.score-big{display:flex;align-items:center;gap:14px}
+.score-big .n{font-size:52px;font-weight:800;line-height:1;font-family:Georgia,serif}
+.score-big .of{color:var(--soft)}
+.crit{margin:12px 0}
+.crit .hd{display:flex;justify-content:space-between;font-weight:600;font-size:15px}
+.bar{height:8px;border-radius:4px;background:var(--line);margin:6px 0 4px;overflow:hidden}
+.bar i{display:block;height:100%;border-radius:4px}
+.small{font-size:13px;color:var(--soft);line-height:1.4}
+ul.plain{padding-left:18px;margin:6px 0} ul.plain li{margin:6px 0;line-height:1.4}
+.rival{border-top:1px solid var(--line);padding:12px 0}
+.rival:first-child{border-top:0}
+.rival a{color:var(--acc);word-break:break-all;font-size:13px}
+.gap{margin-top:6px;font-size:14px;background:#f1f7f4;border-radius:8px;padding:7px 9px}
+.feat{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.feat:first-child{border-top:0}
+.pill{font-size:11px;font-weight:700;padding:2px 7px;border-radius:6px;background:var(--ink);color:#fff;flex:none;margin-top:2px}
+.pill.later{background:var(--line);color:var(--soft)}
+.sheet-bg{position:fixed;inset:0;background:rgba(20,24,32,.35);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--card);width:100%;max-width:640px;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
+.sheet textarea,.field{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;min-height:110px;resize:vertical}
+.field{min-height:0}
+label.lb{display:block;font-weight:600;margin:14px 0 6px}
+.busy{display:flex;align-items:center;gap:10px;color:var(--soft);padding:14px 0}
+.spin{width:18px;height:18px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--acc);animation:sp 0.8s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;z-index:30;font-size:14px;max-width:90%}
+.err{background:#fbe9e3;color:#8a2c17;border-radius:10px;padding:10px 12px;font-size:14px;margin:8px 0}
+.delta{font-size:14px;font-weight:700;margin-left:6px}
+.delta.up{color:var(--good)} .delta.down{color:var(--hot)}
+.back{font-size:15px;color:var(--acc);font-weight:600;padding:6px 0}
+.spark{display:block;margin-top:8px}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+'use strict';
+/* ---------- native bridge ---------- */
+const N = window.Native || null;
+const cbs = {}; let cbn = 0;
+window.__done = (id, payload) => { const f = cbs[id]; if (f) { delete cbs[id]; f(payload); } };
+function call(method, ...args){
+  return new Promise(res => { const id = 'c' + (++cbn); cbs[id] = res; N[method](...args, id); });
+}
+
+/* ---------- data ---------- */
+const MODEL_SMART = 'claude-sonnet-5-5', MODEL_FAST = 'claude-haiku-5-5';
+const CRITERIA = [
+  ['Problem','How painful and common the problem is'],
+  ['Market','How many people or businesses would pay'],
+  ['Competition','10 = open field, 1 = very crowded'],
+  ['Build effort','10 = quick and cheap to build, 1 = huge'],
+  ['Money','How easily it turns into income'],
+  ['Fit for you','How well it suits the owner\'s skills and businesses']
+];
+let D = { v:1, settings:{ apiKey:'', aboutMe:'' }, ideas:[] };
+function load(){
+  try { const s = N ? N.load() : null; if (s) { const o = JSON.parse(s); if (o && o.ideas) D = o; } } catch(e){}
+  D.settings = Object.assign({ apiKey:'', aboutMe:'' }, D.settings || {});
+}
+function save(){ if (N) N.save(JSON.stringify(D)); }
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+function firstWords(t, n){ const w = (t||'').trim().split(/\s+/).slice(0,n).join(' '); return w ? w.charAt(0).toUpperCase()+w.slice(1) : 'Untitled idea'; }
+
+function mergeInbox(){
+  if (!N) return 0;
+  let arr = [];
+  try { arr = JSON.parse(N.takeInbox() || '[]'); } catch(e){ arr = []; }
+  arr.forEach(x => {
+    const t = x.t || Date.now();
+    D.ideas.unshift({ id:uid(), created:t, updated:t, title:firstWords(x.text,6), pitch:'', tags:[], tidied:false,
+      notes:[{ id:uid(), t, text:x.text||'', src:x.src||'voice', img:x.img||'' }], ratings:[], rivals:null, develop:null, archived:false });
+  });
+  if (arr.length) save();
+  return arr.length;
+}
+function newIdea(text, src, img){
+  const t = Date.now();
+  const idea = { id:uid(), created:t, updated:t, title:firstWords(text,6), pitch:'', tags:[], tidied:false,
+    notes:[{ id:uid(), t, text, src, img:img||'' }], ratings:[], rivals:null, develop:null, archived:false };
+  D.ideas.unshift(idea); save(); return idea;
+}
+const byId = id => D.ideas.find(i => i.id === id);
+const lastRating = i => i.ratings.length ? i.ratings[i.ratings.length-1] : null;
+
+/* ---------- Claude API ---------- */
+async function claude(body){
+  if (!D.settings.apiKey) throw new Error('Add your Claude API key in Settings first.');
+  if (!N) throw new Error('Only works inside the phone app.');
+  const req = { url:'https://api.anthropic.com/v1/messages', method:'POST',
+    headers:{ 'x-api-key':D.settings.apiKey.trim(), 'anthropic-version':'2023-06-01', 'content-type':'application/json' },
+    body: JSON.stringify(body) };
+  const raw = await call('http', JSON.stringify(req));
+  let r; try { r = JSON.parse(raw); } catch(e){ throw new Error('No response. Check your internet.'); }
+  if (!r.ok){
+    if (r.status === 401) throw new Error('Your API key was not accepted. Check it in Settings.');
+    if (r.status === 429 || r.status === 529 || r.status === 503) throw new Error('Claude is busy. Try again in a minute.');
+    if (!r.status) throw new Error('No connection. Check your internet.');
+    let m = ''; try { m = JSON.parse(r.body).error.message; } catch(e){}
+    throw new Error('Claude error ' + r.status + (m ? ': ' + m : ''));
+  }
+  return JSON.parse(r.body);
+}
+function textOf(msg){ return (msg.content||[]).filter(b => b.type === 'text').map(b => b.text).join(''); }
+function pullJson(s){
+  const fence = s.match(/```(?:json)?\s*([\s\S]*?)```/);
+  const src = fence ? fence[1] : s;
+  const a = src.indexOf('{'), b = src.lastIndexOf('}');
+  if (a < 0 || b < a) throw new Error('Claude did not return a usable answer. Try again.');
+  return JSON.parse(src.slice(a, b+1));
+}
+function ideaText(i){
+  let s = 'IDEA NOTES (oldest first):\n';
+  i.notes.forEach(n => { s += '- ' + new Date(n.t).toISOString().slice(0,10) + ': ' + (n.text||'(image)') + '\n'; });
+  if (i.title && i.tidied) s += '\nCurrent title: ' + i.title + '\nPitch: ' + i.pitch + '\n';
+  return s;
+}
+function imageBlocks(i){
+  const out = [];
+  if (!N) return out;
+  i.notes.filter(n => n.img).slice(-2).forEach(n => {
+    const d = N.image(n.img); const m = d && d.match(/^data:(image\/\w+);base64,(.+)$/);
+    if (m) out.push({ type:'image', source:{ type:'base64', media_type:m[1], data:m[2] } });
+  });
+  return out;
+}
+function about(){ return D.settings.aboutMe ? '\nABOUT THE OWNER: ' + D.settings.aboutMe + '\n' : '\nABOUT THE OWNER: not given, score Fit for you as 5 and say so.\n'; }
+
+async function aiTidy(i){
+  const msg = await claude({ model:MODEL_FAST, max_tokens:400,
+    system:'You turn rough spoken idea notes into a tidy record. Use UK English. Reply with JSON only.',
+    messages:[{ role:'user', content:[...imageBlocks(i), { type:'text', text: ideaText(i) +
+      '\nReturn JSON: {"title": "max 6 words", "pitch": "one plain sentence, what it is and who for", "tags": ["up to 4 short lowercase tags"]}' }] }] });
+  const j = pullJson(textOf(msg));
+  i.title = String(j.title || i.title).slice(0,60); i.pitch = String(j.pitch || ''); i.tags = (j.tags||[]).slice(0,4).map(String);
+  i.tidied = true; save();
+}
+async function aiRate(i){
+  const riv = i.rivals ? '\nCOMPETITOR RESEARCH (' + new Date(i.rivals.t).toISOString().slice(0,10) + '): ' + i.rivals.summary + '\n' +
+    i.rivals.list.map(c => '- ' + c.name + ': ' + c.what).join('\n') : '\nNo competitor research yet: score Competition from general knowledge and mark it as an assumption.';
+  const prev = lastRating(i);
+  const prevTxt = prev ? '\nPREVIOUS SCORE: ' + prev.overall + '/10 (' + prev.verdict + '). Only move scores where the new notes justify it.' : '';
+  const msg = await claude({ model:MODEL_SMART, max_tokens:1800,
+    system:'You are a blunt, experienced UK small-business and startup advisor. Score ideas honestly. 5 is an ordinary idea, 7 is good, 8 or more is rare and must be earned. Never flatter. Keep fact and assumption separate. Use UK English and no em dashes. Reply with JSON only.',
+    messages:[{ role:'user', content:[...imageBlocks(i), { type:'text', text: ideaText(i) + about() + riv + prevTxt +
+      '\nScore each criterion 1-10 with one short reason:\n' + CRITERIA.map(c => '- ' + c[0] + ': ' + c[1]).join('\n') +
+      '\nReturn JSON: {"overall": number 1-10 one decimal, "verdict": "one blunt line", "criteria": [{"name": "...", "score": n, "why": "..."}], "risks": ["top 3 reasons it could fail"], "next": ["3 concrete next steps, cheapest test first"], "assumptions": ["what you assumed"], "confidence": "low|medium|high"}' }] }] });
+  const j = pullJson(textOf(msg));
+  const r = { t:Date.now(), overall:Math.round(Number(j.overall)*10)/10, verdict:String(j.verdict||''),
+    criteria:(j.criteria||[]).map(c => ({ name:String(c.name), score:Number(c.score), why:String(c.why||'') })),
+    risks:(j.risks||[]).map(String), next:(j.next||[]).map(String), assumptions:(j.assumptions||[]).map(String),
+    confidence:String(j.confidence||'medium'), notesAt:i.notes.length };
+  if (isNaN(r.overall)) throw new Error('Claude did not return a score. Try again.');
+  i.ratings.push(r); i.updated = Date.now(); save();
+}
+async function aiRivals(i){
+  let messages = [{ role:'user', content: ideaText(i) +
+    '\nSearch the web for existing products, apps or businesses that already solve this. Focus on the UK where relevant. ' +
+    'Only list competitors you actually found in search results, never invent any. Give each one the URL you found it at. ' +
+    'Finish with a JSON block in ```json fences: {"summary": "2 sentences on how crowded it is and where the gap is", "crowded": 1-10 (10 = very crowded), "competitors": [{"name": "...", "url": "...", "what": "one line", "price": "price if found, else unknown", "gap": "what they miss that this idea could do"}]} with at most 6 competitors.' }];
+  let msg, sources = [];
+  for (let turn = 0; turn < 4; turn++){
+    msg = await claude({ model:MODEL_SMART, max_tokens:4000,
+      system:'You are a careful market researcher. Use UK English and no em dashes. Never invent companies, prices or URLs.',
+      tools:[{ type:'web_search_20250305', name:'web_search', max_uses:5 }], messages });
+    (msg.content||[]).forEach(b => {
+      if (b.type === 'web_search_tool_result' && Array.isArray(b.content)) b.content.forEach(r => { if (r.url) sources.push({ url:r.url, title:r.title||r.url }); });
+    });
+    if (msg.stop_reason !== 'pause_turn') break;
+    messages = messages.concat([{ role:'assistant', content: msg.content }]);
+  }
+  const j = pullJson(textOf(msg));
+  const host = u => { try { return new URL(u).hostname.replace(/^www\./,''); } catch(e){ return ''; } };
+  const found = new Set(sources.map(s => host(s.url)));
+  i.rivals = { t:Date.now(), summary:String(j.summary||''), crowded:Number(j.crowded)||null,
+    list:(j.competitors||[]).slice(0,6).map(c => ({ name:String(c.name), url:String(c.url||''), what:String(c.what||''), price:String(c.price||'unknown'), gap:String(c.gap||''), checked: found.has(host(c.url)) })),
+    sources: sources.slice(0,12) };
+  i.updated = Date.now(); save();
+}
+async function aiDevelop(i){
+  const r = lastRating(i);
+  const msg = await claude({ model:MODEL_SMART, max_tokens:1500,
+    system:'You help an owner develop a rough idea into something buildable. Be practical and specific. UK English, no em dashes. Reply with JSON only.',
+    messages:[{ role:'user', content: ideaText(i) + about() + (r ? '\nLATEST SCORE ' + r.overall + '/10. Risks: ' + r.risks.join('; ') : '') +
+      (i.rivals ? '\nCOMPETITOR GAPS: ' + i.rivals.list.map(c => c.name + ' misses ' + c.gap).join('; ') : '') +
+      '\nReturn JSON: {"questions": ["3 sharp questions the owner must answer next, each one line"], "features": [{"name": "short", "why": "one line", "mvp": true or false}], "mvp": "one sentence describing the smallest first version"} with 6 to 8 features, at most 4 marked mvp.' }] });
+  const j = pullJson(textOf(msg));
+  i.develop = { t:Date.now(), questions:(j.questions||[]).map(String), mvp:String(j.mvp||''),
+    features:(j.features||[]).map(f => ({ name:String(f.name), why:String(f.why||''), mvp:!!f.mvp })) };
+  i.updated = Date.now(); save();
+}
+
+/* ---------- UI state ---------- */
+const S = { view:'list', id:null, tab:'idea', q:'', sort:'new', busy:{}, err:{}, sheet:null };
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const scls = n => n == null ? '' : n < 5 ? 's-low' : n < 7 ? 's-mid' : 's-hi';
+const scol = n => n < 5 ? 'var(--hot)' : n < 7 ? 'var(--warm)' : 'var(--good)';
+function ago(t){ const d = (Date.now()-t)/864e5; if (d < 1) return 'today'; if (d < 2) return 'yesterday'; if (d < 30) return Math.floor(d) + ' days ago'; return new Date(t).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }
+function toast(m){ const el = document.createElement('div'); el.className = 'toast'; el.textContent = m; document.body.appendChild(el); setTimeout(() => el.remove(), 2600); }
+const app = document.getElementById('app');
+
+function render(){
+  if (S.view === 'idea' && !byId(S.id)) S.view = 'list';
+  app.innerHTML = S.view === 'list' ? viewList() : S.view === 'idea' ? viewIdea(byId(S.id)) : viewSettings();
+  if (S.sheet) app.insertAdjacentHTML('beforeend', S.sheet());
+}
+
+function viewList(){
+  let list = D.ideas.filter(i => S.sort === 'archived' ? i.archived : !i.archived);
+  if (S.q){ const q = S.q.toLowerCase(); list = list.filter(i => (i.title + ' ' + i.pitch + ' ' + i.tags.join(' ') + ' ' + i.notes.map(n => n.text).join(' ')).toLowerCase().includes(q)); }
+  if (S.sort === 'top') list.sort((a,b) => ((lastRating(b)||{}).overall||-1) - ((lastRating(a)||{}).overall||-1));
+  else if (S.sort === 'stale') list = list.filter(i => Date.now() - i.updated > 30*864e5).sort((a,b) => a.updated - b.updated);
+  else if (S.sort === 'unrated') list = list.filter(i => !i.ratings.length);
+  else list.sort((a,b) => b.updated - a.updated);
+  const chip = (k, l) => `<button class="chip ${S.sort===k?'on':''}" data-sort="${k}">${l}</button>`;
+  const total = D.ideas.filter(i => !i.archived).length;
+  return `<header><div class="top"><div class="brand">Elev<b>a</b>te</div>
+    <button class="iconbtn" data-act="settings" aria-label="Settings">⚙︎</button></div>
+    <input class="search" id="q" placeholder="Search ${total} idea${total===1?'':'s'}" value="${esc(S.q)}">
+    <div class="chips">${chip('new','Latest')}${chip('top','Best scores')}${chip('unrated','Not rated')}${chip('stale','Untouched 30+ days')}${chip('archived','Archived')}</div></header>
+  <main>${!D.settings.apiKey && total ? `<div class="card small">Add your Claude API key in <b>Settings</b> to get titles, scores and competitor checks.</div>` : ''}
+  ${list.length ? list.map(cardHtml).join('') : `<div class="empty"><div class="big">${total ? 'Nothing here' : 'No ideas yet'}</div>${total ? 'Try another filter.' : 'Tap the microphone and say your idea. That is all it takes.'}</div>`}</main>
+  <div class="fabs"><button class="fab alt" data-act="type" aria-label="Type an idea">✎</button><button class="fab main" data-act="voice">🎤 New idea</button></div>`;
+}
+function cardHtml(i){
+  const r = lastRating(i), stale = Date.now() - i.updated > 30*864e5;
+  return `<div class="card"><button class="idea" data-open="${i.id}">
+    <div class="badge ${scls(r && r.overall)}">${r ? r.overall : '–'}</div>
+    <div style="flex:1;min-width:0"><div class="t1">${esc(i.title)}</div>
+    <div class="t2">${esc(i.pitch || (i.notes[0] && i.notes[0].text) || '').slice(0,140)}</div>
+    <div class="tags">${i.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}${stale && !i.archived ? '<span class="tag warn">untouched</span>' : ''}<span class="small" style="margin-left:auto">${ago(i.updated)}</span></div></div></button></div>`;
+}
+
+function viewIdea(i){
+  const tab = (k, l) => `<button class="tab ${S.tab===k?'on':''}" data-tab="${k}">${l}</button>`;
+  const body = S.tab === 'score' ? tabScore(i) : S.tab === 'rivals' ? tabRivals(i) : S.tab === 'develop' ? tabDevelop(i) : tabIdea(i);
+  return `<header><div class="top"><button class="back" data-act="home">‹ All ideas</button><span style="flex:1"></span>
+    <button class="iconbtn" data-act="menu" aria-label="More">⋯</button></div>
+    <h2>${esc(i.title)}</h2>${i.pitch ? `<div class="t2">${esc(i.pitch)}</div>` : ''}
+    <div class="tabs">${tab('idea','Idea')}${tab('score','Score')}${tab('rivals','Rivals')}${tab('develop','Develop')}</div></header>
+  <main>${body}</main>
+  <div class="fabs"><button class="fab alt" data-act="addtype" aria-label="Type a note">✎</button><button class="fab main" data-act="addvoice">🎤 Add to idea</button></div>`;
+}
+function busyOr(key, label){ return S.busy[key] ? `<div class="busy"><div class="spin"></div>${label}</div>` : ''; }
+function errOf(key){ return S.err[key] ? `<div class="err">${esc(S.err[key])}</div>` : ''; }
+
+function tabIdea(i){
+  const r = lastRating(i);
+  return `${!i.tidied && D.settings.apiKey ? busyOr('tidy'+i.id, 'Tidying your notes…') : ''}${errOf('tidy'+i.id)}
+  ${r ? `<div class="card" style="display:flex;align-items:center;gap:12px"><div class="badge ${scls(r.overall)}">${r.overall}</div><div><b>${esc(r.verdict)}</b><div class="small">Scored ${ago(r.t)}${i.notes.length > r.notesAt ? ' · new notes since, re-score in Score' : ''}</div></div></div>` : ''}
+  <h3>Notes</h3><div class="card">${i.notes.map(n => `<div class="note"><div class="when">${new Date(n.t).toLocaleString('en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})} · ${n.src}</div>
+    ${n.text ? `<div>${esc(n.text)}</div>` : ''}${n.img && N ? `<img src="${N.image(n.img)}" alt="">` : ''}</div>`).join('')}</div>
+  ${i.tags.length ? `<div class="tags">${i.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}</div>` : ''}
+  <div class="small" style="margin-top:14px">First captured ${ago(i.created)}.</div>`;
+}
+function tabScore(i){
+  const r = lastRating(i), hist = i.ratings;
+  const fresh = r && i.notes.length > r.notesAt;
+  let h = errOf('rate'+i.id) + busyOr('rate'+i.id, 'Scoring honestly, about 20 seconds…');
+  if (!r) return h + (S.busy['rate'+i.id] ? '' : `<div class="card"><p>Get an honest score out of 10 across six areas, the top risks and the cheapest next steps.</p>
+    ${i.rivals ? '' : '<p class="small">Tip: run Rivals first for a sharper Competition score.</p>'}<button class="btn full" data-act="rate">Score this idea</button></div>`);
+  const prev = hist.length > 1 ? hist[hist.length-2].overall : null;
+  const d = prev == null ? '' : r.overall - prev;
+  h += `<div class="card"><div class="score-big"><div class="n" style="color:${scol(r.overall)}">${r.overall}</div><div><div class="of">out of 10${d!=='' && d!==0 ? `<span class="delta ${d>0?'up':'down'}">${d>0?'▲':'▼'} ${Math.abs(Math.round(d*10)/10)}</span>` : ''}</div><b>${esc(r.verdict)}</b><div class="small">Confidence: ${esc(r.confidence)} · ${ago(r.t)}</div></div></div>
+    ${hist.length > 1 ? spark(hist.map(x => x.overall)) : ''}</div>
+  <div class="card">${r.criteria.map(c => `<div class="crit"><div class="hd"><span>${esc(c.name)}</span><span>${c.score}/10</span></div><div class="bar"><i style="width:${c.score*10}%;background:${scol(c.score)}"></i></div><div class="small">${esc(c.why)}</div></div>`).join('')}</div>
+  <h3>Top risks</h3><div class="card"><ul class="plain">${r.risks.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+  <h3>Next steps</h3><div class="card"><ul class="plain">${r.next.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>
+  ${r.assumptions.length ? `<h3>Assumed, not checked</h3><div class="card small"><ul class="plain">${r.assumptions.map(x => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
+  ${S.busy['rate'+i.id] ? '' : `<button class="btn ${fresh?'':'ghost'} full" data-act="rate">${fresh ? 'Re-score with your new notes' : 'Score again'}</button>`}`;
+  return h;
+}
+function spark(v){
+  const w = 300, hh = 46, n = v.length, x = k => 6 + k*(w-12)/(n-1), y = s => hh - 6 - (s/10)*(hh-12);
+  const pts = v.map((s,k) => x(k)+','+y(s)).join(' ');
+  return `<svg class="spark" viewBox="0 0 ${w} ${hh}" width="100%" height="${hh}" aria-label="Score history"><polyline points="${pts}" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linejoin="round"/>${v.map((s,k) => `<circle cx="${x(k)}" cy="${y(s)}" r="3.5" fill="var(--acc)"/>`).join('')}</svg><div class="small">Score history: ${v.join(' → ')}</div>`;
+}
+function tabRivals(i){
+  const R = i.rivals;
+  let h = errOf('riv'+i.id) + busyOr('riv'+i.id, 'Searching the web for competitors, up to a minute…');
+  if (!R) return h + (S.busy['riv'+i.id] ? '' : `<div class="card"><p>Search the web for who already does this, what they charge and what they miss.</p><button class="btn full" data-act="rivals">Find competitors</button></div>`);
+  h += `<div class="card"><b>${R.crowded ? 'Crowded: ' + R.crowded + '/10' : 'Market check'}</b><p style="margin:6px 0 0">${esc(R.summary)}</p><div class="small" style="margin-top:6px">Checked ${ago(R.t)}. Web results go out of date, so check again before deciding.</div></div>`;
+  h += `<div class="card">${R.list.length ? R.list.map(c => `<div class="rival"><div style="display:flex;gap:8px;align-items:center"><b style="flex:1">${esc(c.name)}</b>${c.checked ? '' : '<span class="tag warn" title="Link not in the search results">unverified link</span>'}</div>
+    <div class="small">${esc(c.what)}</div><div class="small">Price: ${esc(c.price)}</div>${c.url ? `<a href="#" data-url="${esc(c.url)}">${esc(c.url)}</a>` : ''}${c.gap ? `<div class="gap"><b>Gap:</b> ${esc(c.gap)}</div>` : ''}</div>`).join('') : '<div class="small">No direct competitors found in the search. That can mean an open field, or a market nobody wants.</div>'}</div>`;
+  if (R.sources && R.sources.length) h += `<h3>Sources searched</h3><div class="card small">${R.sources.slice(0,8).map(s => `<div style="margin:4px 0"><a href="#" data-url="${esc(s.url)}" style="color:var(--acc)">${esc(s.title)}</a></div>`).join('')}</div>`;
+  if (!S.busy['riv'+i.id]) h += `<button class="btn ghost full" data-act="rivals">Check again</button>`;
+  return h;
+}
+function tabDevelop(i){
+  const v = i.develop;
+  let h = errOf('dev'+i.id) + busyOr('dev'+i.id, 'Working out what to build first…');
+  if (!v) return h + (S.busy['dev'+i.id] ? '' : `<div class="card"><p>Get the three questions you need to answer next, a feature list and the smallest first version.</p><button class="btn full" data-act="develop">Develop this idea</button></div>`);
+  h += `<h3>Answer these next</h3><div class="card">${v.questions.map((q,k) => `<div class="feat"><span class="pill">Q${k+1}</span><div style="flex:1">${esc(q)}<div class="row" style="margin-top:8px"><button class="btn ghost" data-answer="${k}" style="min-height:38px;padding:6px 12px">🎤 Answer</button><button class="btn ghost" data-answertype="${k}" style="min-height:38px;padding:6px 12px">✎</button></div></div></div>`).join('')}</div>
+  <h3>Smallest first version</h3><div class="card">${esc(v.mvp)}</div>
+  <h3>Features</h3><div class="card">${v.features.slice().sort((a,b) => b.mvp - a.mvp).map(f => `<div class="feat"><span class="pill ${f.mvp?'':'later'}">${f.mvp?'FIRST':'LATER'}</span><div><b>${esc(f.name)}</b><div class="small">${esc(f.why)}</div></div></div>`).join('')}</div>
+  <div class="row">${S.busy['dev'+i.id] ? '' : `<button class="btn ghost" style="flex:1" data-act="develop">Refresh</button><button class="btn ghost" style="flex:1" data-act="copybrief">Copy build brief</button>`}</div>`;
+  return h;
+}
+function viewSettings(){
+  return `<header><div class="top"><button class="back" data-act="home">‹ All ideas</button></div><h2>Settings</h2></header><main>
+  <div class="card"><label class="lb" for="key" style="margin-top:0">Claude API key</label>
+  <input class="field" id="key" type="password" autocomplete="off" placeholder="sk-ant-…" value="${esc(D.settings.apiKey)}">
+  <div class="small" style="margin-top:6px">Stays on this phone. Used for titles, scores, competitor search and develop. Rough cost (estimate): under 1p to tidy, about 2p to score, about 10p for a competitor search.</div>
+  <label class="lb" for="me">About you, for the "Fit for you" score</label>
+  <textarea class="field" id="me" rows="4" placeholder="e.g. Run a print business and do property marketing for a client. Can build web apps with AI help. Small budget.">${esc(D.settings.aboutMe)}</textarea>
+  <button class="btn full" style="margin-top:12px" data-act="savesettings">Save</button></div>
+  <h3>Backup</h3><div class="card"><p class="small" style="margin-top:0">Ideas live only on this phone. Save a backup now and then.</p>
+  <div class="row"><button class="btn ghost" style="flex:1" data-act="export">Save backup</button><button class="btn ghost" style="flex:1" data-act="import">Restore backup</button></div></div>
+  <h3>Quick capture</h3><div class="card small">Home screen: long-press an empty space, Widgets, Elevate.<br>Quick settings: pull down twice, tap the pencil, drag the Elevate tile up.<br>Share: from any app, Share, then Elevate.</div>
+  <div class="small" style="text-align:center;margin:20px 0">Elevate · build ${window.BUILD || 'dev'}</div></main>`;
+}
+
+/* ---------- sheets ---------- */
+function openTypeSheet(title, onSave, pre){
+  S.sheet = () => `<div class="sheet-bg" data-act="closesheet"><div class="sheet">
+    <div style="font-weight:700;margin-bottom:10px">${esc(title)}</div><textarea id="sheettext" placeholder="Type it as it comes, no need to tidy">${esc(pre||'')}</textarea>
+    <div class="row" style="margin-top:12px"><button class="btn ghost" style="flex:1" data-act="closesheet">Cancel</button><button class="btn" style="flex:1" data-act="sheetsave">Save</button></div></div></div>`;
+  S.sheetSave = onSave; render(); setTimeout(() => { const t = document.getElementById('sheettext'); if (t) t.focus(); }, 50);
+}
+function openMenu(i){
+  S.sheet = () => `<div class="sheet-bg" data-act="closesheet"><div class="sheet">
+    <button class="btn ghost full" data-act="rename">Rename</button><div style="height:8px"></div>
+    <button class="btn ghost full" data-act="archive">${i.archived ? 'Restore from archive' : 'Archive'}</button><div style="height:8px"></div>
+    <button class="btn ghost full" data-act="delete" style="color:var(--hot)">Delete for good</button><div style="height:8px"></div>
+    <button class="btn ghost full" data-act="closesheet">Close</button></div></div>`;
+  render();
+}
+
+/* ---------- actions ---------- */
+async function run(key, fn){
+  if (S.busy[key]) return;
+  S.busy[key] = true; delete S.err[key]; render();
+  try { await fn(); } catch(e){ S.err[key] = e.message || String(e); }
+  delete S.busy[key]; render();
+}
+async function voiceText(){ if (!N) return null; const t = await call('voice'); return t && t.trim() ? t.trim() : null; }
+function addNote(i, text, src){ i.notes.push({ id:uid(), t:Date.now(), text, src }); i.updated = Date.now(); save(); }
+async function tidyPending(){
+  if (!D.settings.apiKey) return;
+  for (const i of D.ideas.filter(x => !x.tidied && !x.archived).slice(0,5)) await run('tidy'+i.id, () => aiTidy(i));
+}
+
+app.addEventListener('input', e => { if (e.target.id === 'q'){ S.q = e.target.value; const pos = e.target.selectionStart; render(); const q = document.getElementById('q'); q.focus(); q.setSelectionRange(pos,pos); } });
+app.addEventListener('click', async e => {
+  const t = e.target.closest('[data-act],[data-open],[data-tab],[data-sort],[data-url],[data-answer],[data-answertype]');
+  if (!t) return;
+  if (t.dataset.url){ e.preventDefault(); if (N) N.openUrl(t.dataset.url); return; }
+  if (t.dataset.open){ S.view = 'idea'; S.id = t.dataset.open; S.tab = 'idea'; render(); window.scrollTo(0,0); return; }
+  if (t.dataset.tab){ S.tab = t.dataset.tab; render(); return; }
+  if (t.dataset.sort){ S.sort = t.dataset.sort; render(); return; }
+  const i = byId(S.id);
+  if (t.dataset.answer || t.dataset.answertype){
+    const k = +(t.dataset.answer || t.dataset.answertype), q = i.develop.questions[k];
+    if (t.dataset.answer){ const v = await voiceText(); if (v){ addNote(i, 'Q: ' + q + '\nA: ' + v, 'answer'); toast('Answer added to notes'); render(); } }
+    else openTypeSheet(q, txt => { addNote(i, 'Q: ' + q + '\nA: ' + txt, 'answer'); toast('Answer added to notes'); });
+    return;
+  }
+  switch (t.dataset.act){
+    case 'home': S.view = 'list'; render(); window.scrollTo(0,0); break;
+    case 'settings': S.view = 'settings'; render(); break;
+    case 'voice': { const v = await voiceText(); if (v){ const n = newIdea(v,'voice'); toast('Idea saved'); render(); if (D.settings.apiKey) run('tidy'+n.id, () => aiTidy(n)); } break; }
+    case 'type': openTypeSheet('New idea', txt => { const n = newIdea(txt,'typed'); toast('Idea saved'); if (D.settings.apiKey) run('tidy'+n.id, () => aiTidy(n)); }); break;
+    case 'addvoice': { const v = await voiceText(); if (v){ addNote(i, v, 'voice'); toast('Added to idea'); S.tab = 'idea'; render(); } break; }
+    case 'addtype': openTypeSheet('Add to this idea', txt => { addNote(i, txt, 'typed'); S.tab = 'idea'; toast('Added to idea'); }); break;
+    case 'sheetsave': { const v = (document.getElementById('sheettext').value || '').trim(); const f = S.sheetSave; S.sheet = null; if (v && f) f(v); render(); break; }
+    case 'closesheet': if (e.target === t || t.tagName === 'BUTTON'){ S.sheet = null; render(); } break;
+    case 'menu': openMenu(i); break;
+    case 'rename': openTypeSheet('Rename', txt => { i.title = txt.slice(0,60); save(); }, i.title); break;
+    case 'archive': i.archived = !i.archived; save(); S.sheet = null; S.view = 'list'; toast(i.archived ? 'Archived' : 'Restored'); render(); break;
+    case 'delete': if (confirm('Delete this idea and all its notes for good?')){ D.ideas = D.ideas.filter(x => x !== i); save(); S.sheet = null; S.view = 'list'; render(); } break;
+    case 'rate': run('rate'+i.id, () => aiRate(i)); break;
+    case 'rivals': run('riv'+i.id, () => aiRivals(i)); break;
+    case 'develop': run('dev'+i.id, () => aiDevelop(i)); break;
+    case 'copybrief': {
+      const r = lastRating(i), v = i.develop;
+      const brief = '# ' + i.title + '\n' + i.pitch + '\n\n## First version\n' + v.mvp + '\n\n## Features\n' + v.features.map(f => '- ' + (f.mvp?'[first] ':'[later] ') + f.name + ': ' + f.why).join('\n') +
+        (r ? '\n\n## Score ' + r.overall + '/10\nRisks:\n' + r.risks.map(x => '- ' + x).join('\n') : '') +
+        (i.rivals ? '\n\n## Competitors\n' + i.rivals.list.map(c => '- ' + c.name + ' (' + c.url + '): gap: ' + c.gap).join('\n') : '') +
+        '\n\n## My notes\n' + i.notes.map(n => '- ' + n.text).join('\n');
+      if (N) N.copy(brief); toast('Build brief copied'); break;
+    }
+    case 'savesettings': D.settings.apiKey = document.getElementById('key').value.trim(); D.settings.aboutMe = document.getElementById('me').value.trim(); save(); toast('Saved'); tidyPending(); break;
+    case 'export': if (N){ const m = N.exportFile('INT_Elevate_backup_' + new Date().toISOString().slice(0,10) + '.json', JSON.stringify({ v:1, ideas:D.ideas, aboutMe:D.settings.aboutMe }, null, 1)); toast(m); } break;
+    case 'import': if (N){ const s = await call('importFile'); if (!s) break; try { const o = JSON.parse(s); if (!Array.isArray(o.ideas)) throw 0; const have = new Set(D.ideas.map(x => x.id)); const add = o.ideas.filter(x => x && x.id && !have.has(x.id)); D.ideas = add.concat(D.ideas); if (o.aboutMe && !D.settings.aboutMe) D.settings.aboutMe = o.aboutMe; save(); toast(add.length + ' idea' + (add.length===1?'':'s') + ' restored'); render(); } catch(err){ toast('That file is not an Elevate backup'); } } break;
+  }
+});
+
+/* called by Android */
+window.onResumeApp = () => { const n = mergeInbox(); if (n){ if (S.view === 'list') render(); else toast(n + ' new idea' + (n===1?'':'s') + ' captured'); tidyPending(); } };
+window.onBack = () => { if (S.sheet){ S.sheet = null; render(); return true; } if (S.view !== 'list'){ S.view = 'list'; render(); return true; } return false; };
+
+load(); mergeInbox(); render(); tidyPending();
+</script>
+</body>
+</html>
