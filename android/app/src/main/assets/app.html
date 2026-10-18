@@ -39,6 +39,9 @@ main{padding:12px 16px;max-width:760px;margin:0 auto}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:7px}
 .tag{font-size:12px;padding:3px 8px;border-radius:999px;background:var(--acc2);color:var(--ink)}
 .tag.warn{background:#fbe9e3;color:var(--hot)}
+.working{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--acc);margin-bottom:2px}
+.workbtn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;margin-top:10px;padding:10px;border-radius:12px;border:2px solid var(--acc);color:var(--acc);font-weight:700;background:var(--card)}
+.workbtn.on{background:var(--acc);color:#fff}
 .empty{text-align:center;color:var(--soft);padding:50px 20px}
 .empty .big{font-size:22px;color:var(--ink);margin-bottom:8px}
 .fabs{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom));display:flex;gap:10px;z-index:6}
@@ -265,7 +268,7 @@ const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp
 const scls = n => n == null ? '' : n < 5 ? 's-low' : n < 7 ? 's-mid' : 's-hi';
 const scol = n => n < 5 ? 'var(--hot)' : n < 7 ? 'var(--warm)' : 'var(--good)';
 function ago(t){ const d = (Date.now()-t)/864e5; if (d < 1) return 'today'; if (d < 2) return 'yesterday'; if (d < 30) return Math.floor(d) + ' days ago'; return new Date(t).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}); }
-function toast(m){ const el = document.createElement('div'); el.className = 'toast'; el.textContent = m; document.body.appendChild(el); setTimeout(() => el.remove(), 2600); }
+function toast(m){ document.querySelectorAll('.toast').forEach(x => x.remove()); const el = document.createElement('div'); el.className = 'toast'; el.textContent = m; document.body.appendChild(el); setTimeout(() => el.remove(), 2600); }
 const app = document.getElementById('app');
 
 function render(){
@@ -280,22 +283,23 @@ function viewList(){
   if (S.sort === 'top') list.sort((a,b) => ((lastRating(b)||{}).overall||-1) - ((lastRating(a)||{}).overall||-1));
   else if (S.sort === 'stale') list = list.filter(i => Date.now() - i.updated > 30*864e5).sort((a,b) => a.updated - b.updated);
   else if (S.sort === 'unrated') list = list.filter(i => !i.ratings.length);
-  else list.sort((a,b) => b.updated - a.updated);
+  else if (S.sort === 'working') list = list.filter(i => i.working).sort((a,b) => b.updated - a.updated);
+  else list.sort((a,b) => (!!b.working - !!a.working) || (b.updated - a.updated));
   const chip = (k, l) => `<button class="chip ${S.sort===k?'on':''}" data-sort="${k}">${l}</button>`;
   const total = D.ideas.filter(i => !i.archived).length;
   return `<header><div class="top"><div class="brand">Elevate<b>.</b><small>Clearpath360 internal tool</small></div>
     <button class="iconbtn" data-act="settings" aria-label="Settings">⚙︎</button></div>
     <input class="search" id="q" placeholder="Search ${total} idea${total===1?'':'s'}" value="${esc(S.q)}">
-    <div class="chips">${chip('new','Latest')}${chip('top','Best scores')}${chip('unrated','Not rated')}${chip('stale','Untouched 30+ days')}${chip('archived','Archived')}</div></header>
+    <div class="chips">${chip('working','★ Working on (' + D.ideas.filter(i => i.working && !i.archived).length + ')')}${chip('new','Latest')}${chip('top','Best scores')}${chip('unrated','Not rated')}${chip('stale','Untouched 30+ days')}${chip('archived','Archived')}</div></header>
   <main>${!D.settings.apiKey && total ? `<div class="card small">Add your Claude API key in <b>Settings</b> to get titles, scores and competitor checks.</div>` : ''}
-  ${list.length ? list.map(cardHtml).join('') : `<div class="empty"><div class="big">${total ? 'Nothing here' : 'No ideas yet'}</div>${total ? 'Try another filter.' : 'Tap the microphone and say your idea. That is all it takes.'}</div>`}</main>
+  ${list.length ? list.map(cardHtml).join('') : `<div class="empty"><div class="big">${S.sort === 'working' ? 'Nothing marked yet' : total ? 'Nothing here' : 'No ideas yet'}</div>${S.sort === 'working' ? 'Open an idea and tap ☆ Working on.' : total ? 'Try another filter.' : 'Tap the microphone and say your idea. That is all it takes.'}</div>`}</main>
   <div class="fabs"><button class="fab alt" data-act="type" aria-label="Type an idea">✎</button><button class="fab main" data-act="voice">🎤 New idea</button></div>`;
 }
 function cardHtml(i){
   const r = lastRating(i), stale = Date.now() - i.updated > 30*864e5;
   return `<div class="card"><button class="idea" data-open="${i.id}">
     <div class="badge ${scls(r && r.overall)}">${r ? r.overall : '–'}</div>
-    <div style="flex:1;min-width:0"><div class="t1">${esc(i.title)}</div>
+    <div style="flex:1;min-width:0">${i.working ? '<div class="working">★ Working on</div>' : ''}<div class="t1">${esc(i.title)}</div>
     <div class="t2">${esc(i.pitch || (i.notes[0] && i.notes[0].text) || '').slice(0,140)}</div>
     <div class="tags">${S.busy['tidy'+i.id] ? '<span class="tag">tidying…</span>' : ''}${i.tags.map(t => `<span class="tag">${esc(t)}</span>`).join('')}${stale && !i.archived ? '<span class="tag warn">untouched</span>' : ''}<span class="small" style="margin-left:auto">${ago(i.updated)}</span></div>
     ${S.err['tidy'+i.id] ? `<div class="err" style="margin-bottom:0">${esc(S.err['tidy'+i.id])}</div>` : ''}</div></button></div>`;
@@ -307,6 +311,7 @@ function viewIdea(i){
   return `<header><div class="top"><button class="back" data-act="home">‹ All ideas</button><span style="flex:1"></span>
     <button class="iconbtn" data-act="menu" aria-label="More">⋯</button></div>
     <h2>${esc(i.title)}</h2>${i.pitch ? `<div class="t2">${esc(i.pitch)}</div>` : ''}
+    <button class="workbtn ${i.working ? 'on' : ''}" data-act="working">${i.working ? '★ Working on this · tap to stop' : '☆ Mark as working on'}</button>
     <div class="tabs">${tab('idea','Idea')}${tab('score','Score')}${tab('rivals','Rivals')}${tab('develop','Develop')}</div></header>
   <main>${body}</main>
   <div class="fabs"><button class="fab alt" data-act="addtype" aria-label="Type a note">✎</button><button class="fab main" data-act="addvoice">🎤 Add to idea</button></div>`;
@@ -472,6 +477,7 @@ app.addEventListener('click', async e => {
         else { i.notes = i.notes.filter(x => x !== n); i.updated = Date.now(); toast('Note deleted'); }
         save(); });
       break; }
+    case 'working': i.working = !i.working; i.updated = Date.now(); save(); toast(i.working ? 'Added to Working on' : 'Removed from Working on'); render(); break;
     case 'retidy': run('tidy'+i.id, () => aiTidy(i)); break;
     case 'testkey': D.settings.apiKey = document.getElementById('key').value.trim(); save();
       run('testkey', async () => { await claude({ model:MODEL_FAST, max_tokens:5, messages:[{ role:'user', content:'Say OK' }] }); toast('Key works'); S.keyOk = true; }); break;
