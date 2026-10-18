@@ -30,12 +30,22 @@ class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.statusBarColor = Color.parseColor("#f5f1ea")
-        window.navigationBarColor = Color.parseColor("#f5f1ea")
-        window.insetsController?.setSystemBarsAppearance(
-            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
-            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
-        )
+        val crash = ElevateApp.takeCrash(application)
+        if (crash != null) {
+            android.app.AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_Light_Dialog_Alert)
+                .setTitle("Elevate crashed last time")
+                .setMessage("Tap Copy and paste it to Claude.\n\n" + crash.take(1500))
+                .setPositiveButton("Copy") { _, _ ->
+                    (getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).setPrimaryClip(ClipData.newPlainText("Elevate crash", crash))
+                    Toast.makeText(this, "Copied", Toast.LENGTH_SHORT).show()
+                }
+                .setNegativeButton("Close", null)
+                .show()
+        }
+        try {
+            window.statusBarColor = Color.parseColor("#f5f1ea")
+            window.navigationBarColor = Color.parseColor("#f5f1ea")
+        } catch (e: Exception) { }
         web = WebView(this)
         web.setBackgroundColor(Color.parseColor("#f5f1ea"))
         web.settings.javaScriptEnabled = true
@@ -49,6 +59,12 @@ class MainActivity : Activity() {
             }
         }
         setContentView(web)
+        try {
+            window.insetsController?.setSystemBarsAppearance(
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS or WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+            )
+        } catch (e: Exception) { }
         web.loadUrl("file:///android_asset/app.html")
     }
 
