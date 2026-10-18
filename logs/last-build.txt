@@ -1,15 +1,4 @@
-run 1: success
-
-Welcome to Gradle 8.14.3!
-
-Here are the highlights of this release:
- - Java 24 support
- - GraalVM Native Image toolchain selection
- - Enhancements to test reporting
- - Build Authoring improvements
-
-For more details see https://docs.gradle.org/8.14.3/release-notes.html
-
+run 2: success
 To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
 Daemon will be stopped at the end of the build 
 > Task :app:preBuild UP-TO-DATE
@@ -22,8 +11,8 @@ Daemon will be stopped at the end of the build
 > Task :app:checkReleaseDuplicateClasses
 > Task :app:buildKotlinToolingMetadata
 > Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
-> Task :app:checkReleaseAarMetadata
 > Task :app:generateReleaseResValues
+> Task :app:checkReleaseAarMetadata
 > Task :app:mapReleaseSourceSetPaths
 > Task :app:generateReleaseResources
 > Task :app:packageReleaseResources
@@ -33,30 +22,30 @@ Daemon will be stopped at the end of the build
 > Task :app:parseReleaseLocalResources
 > Task :app:processReleaseMainManifest
 > Task :app:processReleaseManifest
-> Task :app:processReleaseManifestForPackage
-> Task :app:javaPreCompileRelease
 > Task :app:desugarReleaseFileDependencies
+> Task :app:javaPreCompileRelease
 > Task :app:mergeReleaseStartupProfile
-> Task :app:processReleaseResources
-> Task :app:mergeExtDexRelease
 > Task :app:mergeReleaseArtProfile
+> Task :app:processReleaseManifestForPackage
 > Task :app:mergeReleaseShaders
 > Task :app:compileReleaseShaders NO-SOURCE
 > Task :app:generateReleaseAssets UP-TO-DATE
 > Task :app:mergeReleaseAssets
 > Task :app:compressReleaseAssets
 > Task :app:extractReleaseVersionControlInfo
+> Task :app:processReleaseResources
 > Task :app:extractProguardFiles
 > Task :app:collectReleaseDependencies
+> Task :app:optimizeReleaseResources
 > Task :app:sdkReleaseDependencyData
 > Task :app:validateSigningRelease
 > Task :app:writeReleaseAppMetadata
 > Task :app:writeReleaseSigningConfigVersions
-> Task :app:optimizeReleaseResources
+> Task :app:mergeExtDexRelease
 
 > Task :app:compileReleaseKotlin
-w: file:///home/runner/work/ideas-releases/ideas-releases/android/app/src/main/java/uk/co/clearpath360/elevate/MainActivity.kt:33:16 'var statusBarColor: Int' is deprecated. Deprecated in Java.
-w: file:///home/runner/work/ideas-releases/ideas-releases/android/app/src/main/java/uk/co/clearpath360/elevate/MainActivity.kt:34:16 'var navigationBarColor: Int' is deprecated. Deprecated in Java.
+w: file:///home/runner/work/ideas-releases/ideas-releases/android/app/src/main/java/uk/co/clearpath360/elevate/MainActivity.kt:46:20 'var statusBarColor: Int' is deprecated. Deprecated in Java.
+w: file:///home/runner/work/ideas-releases/ideas-releases/android/app/src/main/java/uk/co/clearpath360/elevate/MainActivity.kt:47:20 'var navigationBarColor: Int' is deprecated. Deprecated in Java.
 
 > Task :app:compileReleaseJavaWithJavac NO-SOURCE
 > Task :app:dexBuilderRelease
@@ -72,7 +61,7 @@ w: file:///home/runner/work/ideas-releases/ideas-releases/android/app/src/main/j
 > Task :app:packageRelease
 > Task :app:createReleaseApkListingFileRedirect
 > Task :app:assembleRelease
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/b-1792323155751.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/b-1792324408472.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/ideas-releases/ideas-releases/android/build/reports/problems/problems-report.html
 
@@ -82,5 +71,5 @@ You can use '--warning-mode all' to show the individual deprecation warnings and
 
 For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
 
-BUILD SUCCESSFUL in 1m 33s
+BUILD SUCCESSFUL in 33s
 45 actionable tasks: 45 executed
