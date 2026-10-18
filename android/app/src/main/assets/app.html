@@ -79,6 +79,11 @@ ul.plain{padding-left:18px;margin:6px 0} ul.plain li{margin:6px 0;line-height:1.
 .sheet{background:var(--card);width:100%;max-width:640px;border-radius:20px 20px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom))}
 .sheet textarea,.field{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;min-height:110px;resize:vertical}
 .field{min-height:0}
+.editor{position:fixed;inset:0;z-index:25;background:var(--card);display:flex;flex-direction:column;border-top:4px solid var(--acc)}
+.editor-top{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.editor-top .btn{min-height:42px;padding:8px 16px}
+.editor-title{flex:1;font-weight:700;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.editor textarea{flex:1;width:100%;border:0;padding:16px;font-size:17px;line-height:1.45;resize:none;outline:none;background:var(--card)}
 label.lb{display:block;font-weight:600;margin:14px 0 6px}
 .busy{display:flex;align-items:center;gap:10px;color:var(--soft);padding:14px 0}
 .spin{width:18px;height:18px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--acc);animation:sp 0.8s linear infinite}
@@ -379,9 +384,9 @@ function viewSettings(){
 
 /* ---------- sheets ---------- */
 function openTypeSheet(title, onSave, pre){
-  S.sheet = () => `<div class="sheet-bg" data-act="closesheet"><div class="sheet">
-    <div style="font-weight:700;margin-bottom:10px">${esc(title)}</div><textarea id="sheettext" placeholder="Type it as it comes, no need to tidy">${esc(pre||'')}</textarea>
-    <div class="row" style="margin-top:12px"><button class="btn ghost" style="flex:1" data-act="closesheet">Cancel</button><button class="btn" style="flex:1" data-act="sheetsave">Save</button></div></div></div>`;
+  S.sheet = () => `<div class="editor"><div class="editor-top">
+    <button class="btn ghost" data-act="closetype">Cancel</button><div class="editor-title">${esc(title)}</div><button class="btn" data-act="sheetsave">Save</button></div>
+    <textarea id="sheettext" placeholder="Type it as it comes, no need to tidy">${esc(pre||'')}</textarea></div>`;
   S.sheetSave = onSave; render(); setTimeout(() => { const t = document.getElementById('sheettext'); if (t) t.focus(); }, 50);
 }
 function askSheet(title, okLabel, onOk){
@@ -450,6 +455,9 @@ app.addEventListener('click', async e => {
       break; }
     case 'addtype': openTypeSheet('Add to this idea', txt => { addNote(i, txt, 'typed'); S.tab = 'idea'; toast('Added to idea'); }); break;
     case 'sheetsave': { const v = (document.getElementById('sheettext').value || '').trim(); if (!v){ toast('Type something first'); break; } const f = S.sheetSave; S.sheet = null; if (f) f(v); render(); break; }
+    case 'closetype': { const v = (document.getElementById('sheettext').value || '').trim();
+      if (v && !S.discardOk){ S.discardOk = true; toast('Tap Cancel again to throw this away'); setTimeout(() => S.discardOk = false, 3000); break; }
+      S.discardOk = false; S.sheet = null; render(); break; }
     case 'closesheet': if (e.target === t || t.tagName === 'BUTTON'){ S.sheet = null; render(); } break;
     case 'menu': openMenu(i); break;
     case 'rename': openTypeSheet('Rename', txt => { i.title = txt.slice(0,60); save(); }, i.title); break;
